@@ -1,0 +1,65 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Data files
+data/raw/*.csv
+data/processed/*.csv
+data/alerts/*.json
+*.log
+logs/
+
+# Model files
+model/*.pkl
+model/*.h5
+model/*.joblib
+
+# Test files
+test_*.csv
+test_*.pkl
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Configuration (may contain sensitive info)
+# Uncomment if you want to ignore config
+# deployment/config.yaml
+
+# Temporary files
+*.tmp
+*.bak
+*.swp

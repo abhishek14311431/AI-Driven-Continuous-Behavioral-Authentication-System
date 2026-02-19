@@ -1,0 +1,72 @@
+# AI Behavior Authentication System Configuration
+# Single-User, Zero-Trust System
+
+# Security Thresholds (Binary Classification: Owner vs Not-Owner)
+security:
+  allow_threshold: 0.8      # Confidence ≥ 0.8 = ALLOW (owner verified)
+  monitor_threshold: 0.7    # Confidence 0.7-0.8 = MONITOR (suspicious)
+  lock_threshold: 0.7       # Confidence < 0.7 = LOCK (Strict Mode)
+  # Note: This is a single-user system. Only owner (class=1) is authorized.
+
+# Capture Settings
+capture:
+  cursor_interval: 0.01      # Cursor capture interval in seconds (100Hz)
+  keyboard_enabled: true     # Enable keyboard capture
+  idle_threshold: 60.0       # Idle detection threshold in seconds
+  idle_check_interval: 5.0   # Idle check interval in seconds
+
+# Feature Extraction (STEP 2)
+features:
+  window_size: 5.0           # Sliding window size for real-time detection (2-5s)
+  save_interval: 5.0         # Save features every N seconds (matches window size)
+
+# Model Settings (STEP 4)
+model:
+  model_file: "model/behavior_model.pkl"
+  scaler_file: "model/feature_scaler.pkl"
+  features_file: "data/processed/behavior_features.csv"
+  # CRITICAL: Model trains ONLY on owner data (label=1)
+  # Attacker data (label=0) is NEVER used in training
+
+# Adaptive Learning (STEP 8)
+adaptive:
+  update_threshold: 100       # Number of new owner samples before model update
+  min_update_interval: 3600.0 # Minimum seconds between updates (1 hour)
+  min_confidence_for_training: 0.85  # Minimum confidence to use session for training
+  # CRITICAL: Model NEVER learns from attacker behavior
+  # Only high-confidence owner sessions are used
+
+# Alert Settings (STEP 7)
+alerts:
+  enabled: true
+  email:
+    enabled: false
+    smtp_server: "smtp.gmail.com"
+    smtp_port: 587
+    sender_email: ""
+    sender_password: ""
+    recipient_email: ""
+  whatsapp:
+    enabled: false
+    api_url: ""
+    api_key: ""
+    phone_number: ""
+
+# Lock Settings
+lock:
+  enabled: true              # Enable system lock functionality
+  auto_lock_on_threat: true   # Automatically lock on low confidence (not-owner)
+
+# Service Settings
+service:
+  check_interval: 2.0        # Main loop check interval (seconds) - matches window size
+  background_mode: true      # Run as background service
+  log_file: "logs/behavior_auth.log"
+  detection_timeout: 6.0     # Maximum time to detect behavior mismatch (seconds)
+
+# Data Storage
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  alerts_dir: "data/alerts"
+  max_file_size_mb: 100      # Maximum log file size before rotation
