@@ -54,6 +54,8 @@ class BehaviorAuthService:
         
         self.is_running = False
         self.service_thread = None
+        self.cursor_thread = None
+        self.idle_thread = None
         
         # Data buffers for sliding window
         self.cursor_buffer = []
@@ -72,7 +74,21 @@ class BehaviorAuthService:
         try:
             # Initialize capture modules
             self.cursor_capture = CursorCapture()
-            self.keyboard_capture = KeyboardCapture()
+            capture_config = self.config.get('capture', {})
+            keyboard_enabled = capture_config.get('keyboard_enabled', True)
+
+            if keyboard_enabled:
+                try:
+                    self.keyboard_capture = KeyboardCapture()
+                except Exception as e:
+                    self.keyboard_capture = None
+                    self.logger.warning(
+                        f"Keyboard capture unavailable; continuing without keyboard signals: {e}"
+                    )
+            else:
+                self.keyboard_capture = None
+                self.logger.info("Keyboard capture disabled by configuration")
+
             self.idle_detector = IdleDetector(
                 idle_threshold=self.config.get('capture', {}).get('idle_threshold', 60.0)
             )
@@ -141,9 +157,34 @@ class BehaviorAuthService:
         self.initialize()
         
         # Start capture modules
-        self.cursor_capture.start_capture()
-        self.keyboard_capture.start_capture()
-        self.idle_detector.start_monitoring()
+        capture_config = self.config.get('capture', {})
+        cursor_interval = capture_config.get('cursor_interval', 0.01)
+        idle_interval = capture_config.get('idle_check_interval', 5.0)
+
+        self.cursor_capture.start_capture(interval=cursor_interval)
+        self.cursor_thread = threading.Thread(
+            target=self.cursor_capture.capture_loop,
+            kwargs={'duration': None, 'interval': cursor_interval},
+            daemon=True
+        )
+        self.cursor_thread.start()
+
+        if self.keyboard_capture:
+            try:
+                self.keyboard_capture.start_capture()
+            except Exception as e:
+                self.logger.warning(
+                    f"Failed to start keyboard capture; continuing without keyboard signals: {e}"
+                )
+                self.keyboard_capture = None
+
+        self.idle_detector.start_monitoring(interval=idle_interval)
+        self.idle_thread = threading.Thread(
+            target=self.idle_detector.monitor_loop,
+            kwargs={'duration': None, 'interval': idle_interval},
+            daemon=True
+        )
+        self.idle_thread.start()
         
         self.is_running = True
         self.service_thread = threading.Thread(target=self._service_loop, daemon=True)
@@ -165,6 +206,11 @@ class BehaviorAuthService:
             self.keyboard_capture.stop_capture()
         if self.idle_detector:
             self.idle_detector.stop_monitoring()
+
+        if self.cursor_thread and self.cursor_thread.is_alive():
+            self.cursor_thread.join(timeout=2)
+        if self.idle_thread and self.idle_thread.is_alive():
+            self.idle_thread.join(timeout=2)
         
         # Stop alert manager
         if self.alert_manager:
