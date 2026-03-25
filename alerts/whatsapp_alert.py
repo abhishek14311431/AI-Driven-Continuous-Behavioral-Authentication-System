@@ -81,6 +81,33 @@ class WhatsAppAlert:
         
         Args:
             decision: Security decision dictionary
+            
+        Returns:
+            True if sent success
+        """
+        if not self.enabled:
+            return False
+            
+        action = decision.get('action', 'unknown').upper()
+        confidence = decision.get('confidence', 0)
+        risk_level = decision.get('risk_level', 'unknown').upper()
+        timestamp = datetime.fromtimestamp(decision.get('timestamp', datetime.now().timestamp())).strftime('%Y-%m-%d %H:%M:%S')
+        
+        message = f"""
+🚨 *SECURITY ALERT* 🚨
+*Action*: {action}
+*Risk*: {risk_level}
+*Confidence*: {confidence:.2%}
+*Time*: {timestamp}
+
+A behavioral mismatch was detected on your system. 
+Action taken: *{action}*.
+        """
+        
+        return self.send_message(message)
+        
+        Args:
+            decision: Security decision dictionary
         
         Returns:
             True if sent successfully

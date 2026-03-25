@@ -78,6 +78,43 @@ class EmailAlert:
         except Exception as e:
             print(f"Error sending email alert: {e}")
             return False
+
+    def send_security_alert(self, decision: Dict) -> bool:
+        """
+        Send security alert via email.
+        
+        Args:
+            decision: Security decision dictionary
+            
+        Returns:
+            True if sent successfully
+        """
+        if not self.enabled:
+            return False
+            
+        action = decision.get('action', 'unknown').upper()
+        confidence = decision.get('confidence', 0)
+        risk_level = decision.get('risk_level', 'unknown').upper()
+        timestamp = datetime.fromtimestamp(decision.get('timestamp', datetime.now().timestamp())).strftime('%Y-%m-%d %H:%M:%S')
+        
+        subject = f"⚠️ SECURITY ALERT: {action} Detected"
+        
+        message = f"""
+AI Behavior Authentication System Alert
+=======================================
+Action: {action}
+Risk Level: {risk_level}
+Confidence: {confidence:.2%}
+Time: {timestamp}
+
+Description:
+A behavioral mismatch was detected on your system. 
+The system has taken the action: {action}.
+
+If this was not you, please secure your account immediately.
+        """
+        
+        return self.send_alert(subject, message)
     
     def send_security_alert(self, decision: Dict) -> bool:
         """

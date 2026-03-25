@@ -148,6 +148,28 @@ class AlertManager:
                             self.alert_queue.put(alert)
                         
                         self._save_queue()
+            except Exception as e:
+                print(f"Error processing alert queue: {e}")
+                
+            threading.Event().wait(10)  # Wait 10 seconds between queue checks
+
+    def start_background_processing(self):
+        """Start background alert processing."""
+        if self.worker_thread and self.worker_thread.is_alive():
+            return
+            
+        self.processing = True
+        self.worker_thread = threading.Thread(target=self.process_queue, daemon=True)
+        self.worker_thread.start()
+        print("Alert processing started")
+
+    def stop_background_processing(self):
+        """Stop background alert processing."""
+        self.processing = False
+        if self.worker_thread:
+            self.worker_thread.join(timeout=2)
+            self.worker_thread = None
+        print("Alert processing stopped")
                 else:
                     import time
                     time.sleep(5)  # Wait before checking again
