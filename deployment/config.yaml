@@ -40,12 +40,12 @@ adaptive:
 alerts:
   enabled: true
   email:
-    enabled: false
+    enabled: true
     smtp_server: "smtp.gmail.com"
     smtp_port: 587
-    sender_email: ""
-    sender_password: ""
-    recipient_email: ""
+    sender_email: "abhhhii1234@gmail.com"
+    sender_password: "vbir vahh jizu hshz"
+    recipient_email: "abhishekyadavv4567@gmail.com"
   whatsapp:
     enabled: false
     api_url: ""
