@@ -25,6 +25,7 @@ If a different person (e.g., a friend or an intruder) touches the laptop, the AI
 ### **4. Communication & Integration**
 *   **SMTPLIB (SMTP)**: Authenticated integration with Gmail for instant security alerts.
 *   **YAML (PyYAML)**: For professional-grade configuration management.
+*   **Threading (Concurrent Execution)**: To handle simultaneous data capture, AI inference, and background alerting without system lag.
 
 ---
 
