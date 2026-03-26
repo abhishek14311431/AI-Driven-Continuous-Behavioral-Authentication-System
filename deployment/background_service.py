@@ -129,17 +129,12 @@ class BehaviorAuthService:
             alert_config = self.config.get('alerts', {})
             if alert_config.get('enabled', False):
                 email_config = None
-                whatsapp_config = None
                 
                 if alert_config.get('email', {}).get('enabled', False):
                     email_config = alert_config.get('email', {})
                 
-                if alert_config.get('whatsapp', {}).get('enabled', False):
-                    whatsapp_config = alert_config.get('whatsapp', {})
-                
                 self.alert_manager = AlertManager(
-                    email_config=email_config,
-                    whatsapp_config=whatsapp_config
+                    email_config=email_config
                 )
                 self.alert_manager.start_background_processing()
             

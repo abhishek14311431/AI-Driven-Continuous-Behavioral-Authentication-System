@@ -11,7 +11,6 @@ import threading
 import time
 
 from .email_alert import EmailAlert
-from .whatsapp_alert import WhatsAppAlert
 
 
 class AlertManager:
@@ -32,15 +31,10 @@ class AlertManager:
         self.alert_queue_file = alert_queue_file
         self.alert_queue = Queue()
         self.email_alert = None
-        self.whatsapp_alert = None
         
         # Initialize email alerts
         if email_config:
             self.email_alert = EmailAlert(**email_config)
-        
-        # Initialize WhatsApp alerts
-        if whatsapp_config:
-            self.whatsapp_alert = WhatsAppAlert(**whatsapp_config)
         
         # Load queued alerts from file
         self._load_queue()
@@ -89,9 +83,9 @@ class AlertManager:
         
         Args:
             decision: Security decision dictionary
-            channels: List of channels to use ['email', 'whatsapp'] (uses all if None)
+            channels: List of channels to use ['email'] (uses all if None)
         """
-        channels = channels or ['email', 'whatsapp']
+        channels = channels or ['email']
         
         alert = {
             'timestamp': datetime.now().isoformat(),
@@ -114,14 +108,11 @@ class AlertManager:
         Returns:
             Dictionary with send status for each channel
         """
-        channels = channels or ['email', 'whatsapp']
+        channels = channels or ['email']
         results = {}
         
         if 'email' in channels and self.email_alert:
             results['email'] = self.email_alert.send_security_alert(decision)
-        
-        if 'whatsapp' in channels and self.whatsapp_alert:
-            results['whatsapp'] = self.whatsapp_alert.send_security_alert(decision)
         
         # If any failed, queue for retry
         if results and not all(results.values()):

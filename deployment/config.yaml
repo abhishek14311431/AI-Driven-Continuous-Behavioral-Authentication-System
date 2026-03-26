@@ -46,11 +46,6 @@ alerts:
     sender_email: "abhhhii1234@gmail.com"
     sender_password: "vbir vahh jizu hshz"
     recipient_email: "abhishekyadavv4567@gmail.com"
-  whatsapp:
-    enabled: false
-    api_url: ""
-    api_key: ""
-    phone_number: ""
 
 # Lock Settings
 lock:
