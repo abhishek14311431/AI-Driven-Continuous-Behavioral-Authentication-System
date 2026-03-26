@@ -47,21 +47,16 @@ class WhatsAppAlert:
         phone_number = phone_number or self.phone_number
         
         try:
-            # Example API call (adjust based on your WhatsApp API provider)
-            headers = {
-                'Authorization': f'Bearer {self.api_key}',
-                'Content-Type': 'application/json'
+            # Enhanced for CallMeBot / standard REST APIs
+            params = {
+                'phone': phone_number,
+                'text': message,
+                'apikey': self.api_key
             }
             
-            payload = {
-                'to': phone_number,
-                'message': message
-            }
-            
-            response = requests.post(
+            response = requests.get(
                 self.api_url,
-                json=payload,
-                headers=headers,
+                params=params,
                 timeout=10
             )
             
@@ -69,8 +64,11 @@ class WhatsAppAlert:
                 print(f"WhatsApp alert sent to {phone_number}")
                 return True
             else:
-                print(f"Error sending WhatsApp alert: {response.status_code} - {response.text}")
-                return False
+                # Fallback for JSON-based APIs
+                payload = {'to': phone_number, 'message': message}
+                headers = {'Authorization': f'Bearer {self.api_key}', 'Content-Type': 'application/json'}
+                response = requests.post(self.api_url, json=payload, headers=headers, timeout=10)
+                return response.status_code == 200
         except Exception as e:
             print(f"Error sending WhatsApp alert: {e}")
             return False

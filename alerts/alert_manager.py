@@ -8,6 +8,7 @@ from typing import List, Dict, Optional
 from datetime import datetime
 from queue import Queue
 import threading
+import time
 
 from .email_alert import EmailAlert
 from .whatsapp_alert import WhatsAppAlert
@@ -123,8 +124,8 @@ class AlertManager:
             results['whatsapp'] = self.whatsapp_alert.send_security_alert(decision)
         
         # If any failed, queue for retry
-        if not all(results.values()):
-            self.queue_alert(decision, channels)
+        if results and not all(results.values()):
+            self.queue_alert(decision, list(results.keys()))
         
         return results
     
@@ -132,7 +133,7 @@ class AlertManager:
         """Process queued alerts (runs in background thread)."""
         self.processing = True
         
-        while self.processing or not self.alert_queue.empty():
+        while self.processing:
             try:
                 if not self.alert_queue.empty():
                     alert = self.alert_queue.get(timeout=1)
@@ -141,17 +142,19 @@ class AlertManager:
                         results = self.send_alert(alert['decision'], alert['channels'])
                         
                         # Mark as sent if all succeeded
-                        if all(results.values()):
+                        if results and all(results.values()):
                             alert['sent'] = True
+                            self._save_queue()
                         else:
                             # Re-queue if failed
                             self.alert_queue.put(alert)
-                        
+                    else:
                         self._save_queue()
+                else:
+                    time.sleep(5)  # Wait before checking again
             except Exception as e:
                 print(f"Error processing alert queue: {e}")
-                
-            threading.Event().wait(10)  # Wait 10 seconds between queue checks
+                time.sleep(5)
 
     def start_background_processing(self):
         """Start background alert processing."""
@@ -170,34 +173,3 @@ class AlertManager:
             self.worker_thread.join(timeout=2)
             self.worker_thread = None
         print("Alert processing stopped")
-                else:
-                    import time
-                    time.sleep(5)  # Wait before checking again
-            except Exception as e:
-                print(f"Error processing alert queue: {e}")
-                import time
-                time.sleep(5)
-    
-    def start_background_processing(self):
-        """Start background thread for processing alerts."""
-        if self.worker_thread is None or not self.worker_thread.is_alive():
-            self.worker_thread = threading.Thread(target=self.process_queue, daemon=True)
-            self.worker_thread.start()
-            print("Alert processing started")
-    
-    def stop_background_processing(self):
-        """Stop background processing."""
-        self.processing = False
-        if self.worker_thread:
-            self.worker_thread.join(timeout=5)
-        print("Alert processing stopped")
-    
-    def get_queue_size(self) -> int:
-        """Get number of queued alerts."""
-        return self.alert_queue.qsize()
-    
-    def clear_queue(self):
-        """Clear all queued alerts."""
-        while not self.alert_queue.empty():
-            self.alert_queue.get()
-        self._save_queue()
