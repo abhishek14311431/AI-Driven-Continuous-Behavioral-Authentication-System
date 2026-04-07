@@ -1,6 +1,6 @@
 # 🔐 AI Behavior Authentication System
 
-A state-of-the-art continuous authentication system that uses machine learning to identify users based on their unique behavioral "fingerprint"—the way they move their mouse and type on their keyboard.
+A state-of-the-art continuous authentication system that uses machine learning to identify users based on their unique behavioral "fingerprint"—the way they move their mouse and type on their keyboard....
 
 ## 🚀 Key Features
 
