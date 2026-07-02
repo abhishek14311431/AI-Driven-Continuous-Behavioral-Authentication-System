@@ -44,6 +44,7 @@ logs/
 model/*.pkl
 model/*.h5
 model/*.joblib
+model/*_features.txt
 
 # Test files
 test_*.csv
@@ -56,8 +57,11 @@ Thumbs.db
 desktop.ini
 
 # Configuration (may contain sensitive info)
-# Uncomment if you want to ignore config
-# deployment/config.yaml
+.env
+deployment/config.yaml
+
+# Generated reports
+results/
 
 # Temporary files
 *.tmp

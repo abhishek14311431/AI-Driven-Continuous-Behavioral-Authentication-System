@@ -13,9 +13,17 @@ from datetime import datetime
 import sys
 from pathlib import Path
 
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    load_dotenv = None
+
 # Add parent directory to path for imports
 parent_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(parent_dir))
+
+if load_dotenv is not None:
+    load_dotenv()
 
 from capture.cursor_capture import CursorCapture
 from capture.keyboard_capture import KeyboardCapture
@@ -131,7 +139,25 @@ class BehaviorAuthService:
                 email_config = None
                 
                 if alert_config.get('email', {}).get('enabled', False):
-                    email_config = alert_config.get('email', {})
+                    email_config = dict(alert_config.get('email', {}))
+                    email_config['sender_email'] = os.environ.get('GMAIL_SENDER_EMAIL')
+                    email_config['sender_password'] = os.environ.get('GMAIL_APP_PASSWORD')
+                    email_config['recipient_email'] = os.environ.get('GMAIL_RECIPIENT_EMAIL')
+
+                    missing_vars = []
+                    if not os.environ.get('GMAIL_SENDER_EMAIL'):
+                        missing_vars.append('GMAIL_SENDER_EMAIL')
+                    if not os.environ.get('GMAIL_APP_PASSWORD'):
+                        missing_vars.append('GMAIL_APP_PASSWORD')
+                    if not os.environ.get('GMAIL_RECIPIENT_EMAIL'):
+                        missing_vars.append('GMAIL_RECIPIENT_EMAIL')
+
+                    if missing_vars:
+                        self.logger.warning(
+                            "Email alert environment variables missing: %s. "
+                            "Email alerts will be disabled until they are set.",
+                            ", ".join(missing_vars)
+                        )
                 
                 self.alert_manager = AlertManager(
                     email_config=email_config

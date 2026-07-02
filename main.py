@@ -14,13 +14,16 @@ sys.path.insert(0, str(project_root))
 from deployment.background_service import BehaviorAuthService
 from deployment.startup_manager import StartupManager
 from model.train_model import BehaviorModelTrainer
-from model.evaluate_model import ModelEvaluator
 from model.adaptive_update import AdaptiveModelUpdater
+from model.test_with_impostor import run_evaluation
 from utils.logger import setup_logger
 
 
 def main():
     """Main entry point."""
+    default_features_file = 'data/processed/behavior_features.csv'
+    sample_features_file = 'data/sample/behavior_features_sample.csv'
+
     parser = argparse.ArgumentParser(description='AI Behavior Authentication System')
     parser.add_argument('--mode', choices=['service', 'train', 'evaluate', 'update', 'install-startup', 'uninstall-startup'],
                        default='service', help='Operation mode')
@@ -58,7 +61,15 @@ def main():
     elif args.mode == 'train':
         # Train model
         logger.info("Training behavior authentication model...")
-        trainer = BehaviorModelTrainer(features_file=args.features_file)
+        features_file = args.features_file
+
+        if features_file == default_features_file and not os.path.exists(default_features_file):
+            features_file = sample_features_file
+            logger.warning(
+                "Main features file not found. Using sample data for testing: data/sample/behavior_features_sample.csv"
+            )
+
+        trainer = BehaviorModelTrainer(features_file=features_file)
         
         try:
             metrics = trainer.train()
@@ -70,13 +81,10 @@ def main():
             sys.exit(1)
     
     elif args.mode == 'evaluate':
-        # Evaluate model
-        logger.info("Evaluating behavior authentication model...")
-        evaluator = ModelEvaluator(model_file=args.model_file, features_file=args.features_file)
-        
+        # Evaluate model against owner and impostor data
+        logger.info("Running owner/impostor evaluation...")
         try:
-            metrics = evaluator.evaluate()
-            evaluator.print_evaluation(metrics)
+            run_evaluation(args.features_file)
         except Exception as e:
             logger.error(f"Evaluation error: {e}")
             sys.exit(1)
