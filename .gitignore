@@ -64,8 +64,10 @@ deployment/config.yaml
 results/
 !results/
 results/*
+results/behavior_comparison.txt
 !results/evaluation_report_sample.txt
 !results/timing_benchmark_sample.txt
+!results/behavior_comparison_sample.txt
 
 # Temporary files
 *.tmp

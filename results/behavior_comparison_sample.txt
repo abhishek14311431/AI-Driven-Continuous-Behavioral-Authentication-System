@@ -1,0 +1,32 @@
+# Sample output generated on behavior_features_sample.csv.
+# Run python utils/analyze_session.py to generate results on your own data.
+
+Timestamp: 2026-07-06 04:19:12
+
+=== BEHAVIOR COMPARISON ===
+Feature                          | Owner Avg    | Impostor Avg  | Difference
+----------------------------------------------------------------------------
+cursor_avg_velocity              | 295.2851     | 659.2124      | +123.2%   
+cursor_max_velocity              | 417.8261     | 837.2087      | +100.4%   
+cursor_std_velocity              | 41.7999      | 82.2141       | +96.7%    
+cursor_avg_acceleration          | 54.6797      | 122.9652      | +124.9%   
+cursor_max_acceleration          | 90.6350      | 175.6368      | +93.8%    
+cursor_std_acceleration          | 10.1395      | 19.0230       | +87.6%    
+cursor_avg_direction_change      | 0.2776       | 0.5135        | +85.0%    
+cursor_movement_smoothness       | 0.8543       | 0.6384        | -25.3%    
+cursor_total_distance            | 1309.4871    | 3031.1731     | +131.5%   
+cursor_time_span                 | 5.0000       | 5.0000        | +0.0%     
+cursor_idle_gap_avg              | 0.1768       | 0.4259        | +140.9%   
+cursor_idle_gap_max              | 0.3952       | 0.8053        | +103.8%   
+keyboard_avg_hold_duration       | 0.1108       | 0.2321        | +109.4%   
+keyboard_std_hold_duration       | 0.0193       | 0.0354        | +83.4%    
+keyboard_avg_inter_key_delay     | 0.1598       | 0.3015        | +88.6%    
+keyboard_std_inter_key_delay     | 0.0314       | 0.0547        | +74.5%    
+keyboard_typing_speed            | 5.1307       | 2.8124        | -45.2%    
+keyboard_pause_frequency         | 0.1820       | 0.3896        | +114.0%   
+keyboard_key_hold_variance       | 0.0002       | 0.0006        | +159.5%   
+keyboard_min_inter_key_delay     | 0.1099       | 0.2188        | +99.2%    
+keyboard_max_inter_key_delay     | 0.2696       | 0.4850        | +79.9%    
+
+Features with >50% difference between owner and impostor: 18 out of 21
+These features are likely the strongest discriminators for your model.
