@@ -1,0 +1,20 @@
+# Sample output generated on behavior_features_sample.csv.
+# Run python main.py --mode evaluate to generate results on your own data.
+
+Timestamp: 2026-07-02 04:47:58
+
+=== OWNER RECOGNITION TEST ===
+Total owner samples tested: 70
+Correctly recognized as owner: 67
+Owner Recognition Rate: 95.71% (this is 1 - FRR)
+False Rejection Rate (FRR): 4.29% (owner wrongly locked out)
+
+=== IMPOSTOR DETECTION TEST ===
+Total impostor samples tested: 30
+Correctly detected as impostor (locked): 30
+Impostor Detection Rate: 100.00% (this is 1 - FAR)
+False Acceptance Rate (FAR): 0.00% (impostor wrongly allowed through)
+
+=== OVERALL SUMMARY ===
+Combined Accuracy (weighted): 97.00%
+Model is suitable for deployment: YES (YES if FAR < 10% and FRR < 15%)

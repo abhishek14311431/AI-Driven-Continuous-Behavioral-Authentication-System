@@ -1,0 +1,22 @@
+# Sample output generated on behavior_features_sample.csv.
+# Run python main.py --mode evaluate to generate results on your own data.
+
+Timestamp: 2026-07-06 00:00:00
+
+=== DETECTION TIMING BENCHMARK ===
+Run 1: 2.0352 seconds
+Run 2: 2.1011 seconds
+Run 3: 2.0328 seconds
+Run 4: 2.0793 seconds
+Run 5: 2.0391 seconds
+Run 6: 2.0386 seconds
+Run 7: 2.1644 seconds
+Run 8: 2.0421 seconds
+Run 9: 2.0334 seconds
+Run 10: 2.0382 seconds
+
+Min detection time: 2.0328 seconds
+Max detection time: 2.1644 seconds
+Average detection time: 2.0604 seconds
+Detection time range: 2.0328 – 2.1644 seconds (avg: 2.0604 seconds)
+Note: Detection time includes 2s sliding window interval per sample, matching real system behavior (check_interval=2.0 in config.yaml)

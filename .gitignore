@@ -62,6 +62,10 @@ deployment/config.yaml
 
 # Generated reports
 results/
+!results/
+results/*
+!results/evaluation_report_sample.txt
+!results/timing_benchmark_sample.txt
 
 # Temporary files
 *.tmp
