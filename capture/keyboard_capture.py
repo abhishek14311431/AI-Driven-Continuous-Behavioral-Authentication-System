@@ -22,12 +22,14 @@ from dataclasses import dataclass
 from collections import defaultdict
 
 # pynput is required for keyboard capture
+KEYBOARD_IMPORT_ERROR = None
 try:
     from pynput import keyboard
     KEYBOARD_AVAILABLE = True
-except ImportError:
+except Exception as exc:
     KEYBOARD_AVAILABLE = False
     keyboard = None
+    KEYBOARD_IMPORT_ERROR = exc
 
 
 @dataclass
@@ -76,8 +78,9 @@ class KeyboardCapture:
         """
         if not KEYBOARD_AVAILABLE:
             raise ImportError(
-                "pynput library is required for keyboard capture. "
-                "Install it with: pip install pynput"
+                "Keyboard capture is unavailable in this environment. "
+                f"Underlying error: {KEYBOARD_IMPORT_ERROR}. "
+                "Run the service on a real GUI laptop/desktop session with a valid DISPLAY/X server."
             )
         
         self.log_file = log_file

@@ -139,7 +139,11 @@ class BehaviorAuthService:
                 email_config = None
                 
                 if alert_config.get('email', {}).get('enabled', False):
-                    email_config = dict(alert_config.get('email', {}))
+                    email_config = {
+                        key: value
+                        for key, value in dict(alert_config.get('email', {})).items()
+                        if key != 'enabled'
+                    }
                     email_config['sender_email'] = os.environ.get('GMAIL_SENDER_EMAIL')
                     email_config['sender_password'] = os.environ.get('GMAIL_APP_PASSWORD')
                     email_config['recipient_email'] = os.environ.get('GMAIL_RECIPIENT_EMAIL')
